@@ -1,0 +1,1142 @@
+/* ========================================
+   MY NOTES
+   Modern Light iPhone-First Design
+   Font: Roboto Mono
+   ======================================== */
+
+
+/* ========================================
+   COLOR PALETTE
+   ======================================== */
+
+:root {
+
+    --background: #F7F4EF;
+
+    --card: #FFFFFF;
+
+    --primary: #3F5148;
+
+    --sage: #82958B;
+
+    --sage-light: #E4ECE7;
+
+    --warm-accent: #D9A99A;
+
+    --text: #343B37;
+
+    --text-secondary: #747C77;
+
+    --text-muted: #A1A6A3;
+
+    --border: rgba(63, 81, 72, 0.08);
+
+    --shadow:
+        0 8px 28px rgba(63, 81, 72, 0.07);
+
+    --delete: #C87575;
+
+    --archive: #82958B;
+
+}
+
+
+/* ========================================
+   GLOBAL
+   ======================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+
+html {
+
+    -webkit-text-size-adjust: 100%;
+
+    scroll-behavior: smooth;
+
+}
+
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    padding-top:
+        env(safe-area-inset-top);
+
+    padding-bottom:
+        env(safe-area-inset-bottom);
+
+    padding-left: 18px;
+
+    padding-right: 18px;
+
+    font-family:
+        "Roboto Mono",
+        monospace;
+
+    color: var(--text);
+
+    background:
+        var(--background);
+
+    -webkit-font-smoothing:
+        antialiased;
+
+    text-rendering:
+        optimizeLegibility;
+
+}
+
+
+/* ========================================
+   APP HEADER
+   ======================================== */
+
+.app-header {
+
+    max-width: 760px;
+
+    margin:
+        0 auto;
+
+    padding-top: 28px;
+
+    padding-bottom: 25px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+}
+
+
+h1 {
+
+    margin: 0;
+
+    color:
+        var(--primary);
+
+    font-family:
+        "Roboto Mono",
+        monospace;
+
+    font-size: 30px;
+
+    font-weight: 700;
+
+    letter-spacing:
+        -1.5px;
+
+    line-height:
+        1.2;
+
+}
+
+
+.note-count {
+
+    margin-top: 8px;
+
+    color:
+        var(--text-muted);
+
+    font-size: 10px;
+
+    font-weight: 500;
+
+    letter-spacing:
+        0.3px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+/* ========================================
+   REFRESH BUTTON
+   ======================================== */
+
+.refresh-button {
+
+    width: 42px;
+
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0;
+
+    color:
+        var(--primary);
+
+    background:
+        var(--sage-light);
+
+    border: none;
+
+    border-radius: 50%;
+
+    font-family:
+        "Roboto Mono",
+        monospace;
+
+    font-size: 23px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+
+}
+
+
+.refresh-button:hover {
+
+    background:
+        #D9E5DE;
+
+}
+
+
+.refresh-button:active {
+
+    transform:
+        rotate(180deg) scale(0.92);
+
+}
+
+
+.refresh-button.loading {
+
+    animation:
+        spin 0.8s linear infinite;
+
+}
+
+
+@keyframes spin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* ========================================
+   NOTES CONTAINER
+   ======================================== */
+
+#notes {
+
+    width: 100%;
+
+    max-width: 760px;
+
+    margin:
+        0 auto;
+
+    padding-bottom: 50px;
+
+}
+
+
+/* ========================================
+   NOTE SWIPE WRAPPER
+   ======================================== */
+
+.note-wrapper {
+
+    position: relative;
+
+    width: 100%;
+
+    margin-bottom: 14px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+}
+
+
+/* ========================================
+   SWIPE ACTIONS
+   ======================================== */
+
+.swipe-actions {
+
+    position: absolute;
+
+    top: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    display: flex;
+
+    align-items: stretch;
+
+    z-index: 1;
+
+}
+
+
+.swipe-action {
+
+    width: 82px;
+
+    border: none;
+
+    color: white;
+
+    font-family:
+        "Roboto Mono",
+        monospace;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+
+.copy-action {
+    background: var(--sage);
+}
+
+
+.delete-action {
+
+    background:
+        var(--delete);
+
+}
+
+.copy-toast {
+
+    position: fixed;
+
+    z-index: 150;
+
+    left: 50%;
+
+    bottom:
+        calc(25px + env(safe-area-inset-bottom));
+
+    padding:
+        12px 16px;
+
+    color:
+        white;
+
+    background:
+        var(--primary);
+
+    border-radius:
+        12px;
+
+    box-shadow:
+        0 10px 30px rgba(63, 81, 72, 0.2);
+
+    font-family:
+        "Roboto Mono",
+        monospace;
+
+    font-size:
+        11px;
+
+    font-weight:
+        500;
+
+    transform:
+        translate(-50%, 100px);
+
+    opacity:
+        0;
+
+    pointer-events:
+        none;
+
+    transition:
+        transform 0.25s ease,
+        opacity 0.25s ease;
+
+}
+
+
+.copy-toast.visible {
+
+    transform:
+        translate(-50%, 0);
+
+    opacity:
+        1;
+
+}
+
+/* ========================================
+   NOTE CARD
+   ======================================== */
+
+.note {
+
+    position: relative;
+
+    z-index: 2;
+
+    padding: 21px;
+
+    background:
+        var(--card);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 20px;
+
+    box-shadow:
+        var(--shadow);
+
+    touch-action:
+        pan-y;
+
+    user-select:
+        none;
+
+    -webkit-user-select:
+        none;
+
+    transform:
+        translateX(0);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+/* ========================================
+   DESKTOP HOVER
+   ======================================== */
+
+@media (hover: hover) {
+
+    .note:hover {
+
+        box-shadow:
+            0 12px 34px rgba(63, 81, 72, 0.11);
+
+    }
+
+}
+
+
+/* ========================================
+   NOTE TITLE
+   ======================================== */
+
+.note-title {
+
+    margin-bottom:
+        10px;
+
+    color:
+        var(--primary);
+
+    font-family:
+        "Roboto Mono",
+        monospace;
+
+    font-size:
+        15px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        -0.3px;
+
+    line-height:
+        1.5;
+
+}
+
+
+/* ========================================
+   NOTE TEXT
+   ======================================== */
+
+.note-text {
+
+    margin:
+        0 0 17px;
+
+    color:
+        var(--text);
+
+    font-family:
+        "Roboto Mono",
+        monospace;
+
+    font-size:
+        15px;
+
+    font-weight:
+        400;
+
+    line-height:
+        1.75;
+
+    letter-spacing:
+        -0.3px;
+
+    overflow-wrap:
+        anywhere;
+
+}
+
+
+/* ========================================
+   NOTE URL
+   ======================================== */
+
+.note-url {
+
+    display:
+        inline-block;
+
+    max-width:
+        100%;
+
+    padding:
+        8px 11px;
+
+    color:
+        var(--primary);
+
+    background:
+        var(--sage-light);
+
+    border-radius:
+        8px;
+
+    font-family:
+        "Roboto Mono",
+        monospace;
+
+    font-size:
+        12px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        -0.2px;
+
+    text-decoration:
+        none;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+
+}
+
+
+.note-url:hover {
+
+    background:
+        #D9E5DE;
+
+}
+
+
+/* ========================================
+   NOTE DATE
+   ======================================== */
+
+.note-date {
+
+    margin-top:
+        15px;
+
+    color:
+        var(--text-muted);
+
+    font-family:
+        "Roboto Mono",
+        monospace;
+
+    font-size:
+        10px;
+
+    font-weight:
+        500;
+
+    letter-spacing:
+        0;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+/* ========================================
+   LOADING STATE
+   ======================================== */
+
+.loading-state {
+
+    padding:
+        50px 20px;
+
+    text-align:
+        center;
+
+    color:
+        var(--text-muted);
+
+    font-size:
+        12px;
+
+}
+
+
+/* ========================================
+   EMPTY STATE
+   ======================================== */
+
+.empty-state {
+
+    padding:
+        70px 20px;
+
+    text-align:
+        center;
+
+}
+
+
+.empty-state-icon {
+
+    margin-bottom:
+        15px;
+
+    color:
+        var(--sage);
+
+    font-size:
+        30px;
+
+}
+
+
+.empty-state-text {
+
+    color:
+        var(--text-muted);
+
+    font-size:
+        12px;
+
+}
+
+
+/* ========================================
+   ERROR STATE
+   ======================================== */
+
+.error-state {
+
+    padding:
+        25px;
+
+    color:
+        var(--delete);
+
+    background:
+        rgba(200, 117, 117, 0.08);
+
+    border-radius:
+        15px;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.6;
+
+}
+
+
+/* ========================================
+   UNDO TOAST
+   ======================================== */
+
+.undo-toast {
+
+    position:
+        fixed;
+
+    z-index:
+        100;
+
+    left:
+        15px;
+
+    right:
+        15px;
+
+    bottom:
+        calc(20px + env(safe-area-inset-bottom));
+
+    max-width:
+        500px;
+
+    margin:
+        0 auto;
+
+    padding:
+        14px 16px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        15px;
+
+    color:
+        white;
+
+    background:
+        var(--primary);
+
+    border-radius:
+        14px;
+
+    box-shadow:
+        0 12px 35px rgba(63, 81, 72, 0.25);
+
+    font-size:
+        12px;
+
+    transform:
+        translateY(130px);
+
+    opacity:
+        0;
+
+    pointer-events:
+        none;
+
+    transition:
+        transform 0.3s ease,
+        opacity 0.3s ease;
+
+}
+
+
+.undo-toast.visible {
+
+    transform:
+        translateY(0);
+
+    opacity:
+        1;
+
+    pointer-events:
+        auto;
+
+}
+
+
+#undo-button {
+
+    padding:
+        6px 10px;
+
+    color:
+        white;
+
+    background:
+        rgba(255, 255, 255, 0.15);
+
+    border:
+        none;
+
+    border-radius:
+        7px;
+
+    font-family:
+        "Roboto Mono",
+        monospace;
+
+    font-size:
+        11px;
+
+    font-weight:
+        700;
+
+    cursor:
+        pointer;
+
+}
+
+
+/* ========================================
+   DELETE MODAL
+   ======================================== */
+
+.modal-backdrop {
+
+    position:
+        fixed;
+
+    inset:
+        0;
+
+    z-index:
+        200;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        20px;
+
+    background:
+        rgba(52, 59, 55, 0.35);
+
+    backdrop-filter:
+        blur(6px);
+
+    -webkit-backdrop-filter:
+        blur(6px);
+
+    opacity:
+        0;
+
+    visibility:
+        hidden;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+
+}
+
+
+.modal-backdrop.visible {
+
+    opacity:
+        1;
+
+    visibility:
+        visible;
+
+}
+
+
+.delete-modal {
+
+    width:
+        100%;
+
+    max-width:
+        360px;
+
+    padding:
+        25px;
+
+    background:
+        var(--card);
+
+    border-radius:
+        20px;
+
+    box-shadow:
+        0 20px 60px rgba(63, 81, 72, 0.2);
+
+}
+
+
+.delete-modal h2 {
+
+    margin:
+        0 0 10px;
+
+    color:
+        var(--primary);
+
+    font-size:
+        18px;
+
+}
+
+
+.delete-modal p {
+
+    margin:
+        0 0 22px;
+
+    color:
+        var(--text-secondary);
+
+    font-size:
+        12px;
+
+    line-height:
+        1.7;
+
+}
+
+
+.modal-actions {
+
+    display:
+        flex;
+
+    gap:
+        10px;
+
+}
+
+
+.modal-button {
+
+    flex:
+        1;
+
+    padding:
+        12px;
+
+    border:
+        none;
+
+    border-radius:
+        10px;
+
+    font-family:
+        "Roboto Mono",
+        monospace;
+
+    font-size:
+        12px;
+
+    font-weight:
+        600;
+
+    cursor:
+        pointer;
+
+}
+
+
+.modal-button.cancel {
+
+    color:
+        var(--primary);
+
+    background:
+        var(--sage-light);
+
+}
+
+
+.modal-button.delete {
+
+    color:
+        white;
+
+    background:
+        var(--delete);
+
+}
+
+
+/* ========================================
+   MOBILE — IPHONE
+   ======================================== */
+
+@media (max-width: 600px) {
+
+    body {
+
+        padding-left:
+            15px;
+
+        padding-right:
+            15px;
+
+    }
+
+
+    .app-header {
+
+        padding-top:
+            29px;
+
+        padding-bottom:
+            23px;
+
+    }
+
+
+    h1 {
+
+        font-size:
+            28px;
+
+    }
+
+
+    .note {
+
+        padding:
+            19px;
+
+        border-radius:
+            19px;
+
+    }
+
+
+    .note-title {
+
+        font-size:
+            14px;
+
+    }
+
+
+    .note-text {
+
+        font-size:
+            14px;
+
+        line-height:
+            1.75;
+
+    }
+
+
+    .note-url {
+
+        font-size:
+            11px;
+
+    }
+
+}
+
+
+/* ========================================
+   SMALL IPHONES
+   ======================================== */
+
+@media (max-width: 375px) {
+
+    body {
+
+        padding-left:
+            12px;
+
+        padding-right:
+            12px;
+
+    }
+
+
+    h1 {
+
+        font-size:
+            26px;
+
+    }
+
+
+    .note {
+
+        padding:
+            17px;
+
+    }
+
+
+    .note-text {
+
+        font-size:
+            13px;
+
+    }
+
+}
+
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+
+        scroll-behavior:
+            auto;
+
+    }
+
+
+    * {
+
+        transition:
+            none !important;
+
+    }
+
+}

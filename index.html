@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#F7F4EF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>My Notes</title>
+    <!-- ========================================
+         ROBOTO MONO
+         ======================================== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="app-header">
+        <div>
+            <h1>My Notes</h1>
+            <div id="note-count" class="note-count">
+                Loading...
+            </div>
+        </div>
+        <button id="refresh-button" class="refresh-button" type="button" aria-label="Refresh notes">
+            ↻
+        </button>
+    </header>
+    <div id="auth-section">
+        <button id="google-login" type="button">
+            Continue with Google
+        </button>
+        <button id="logout-button" type="button" hidden>
+            Log out
+        </button>
+        <p id="user-info"></p>
+    </div>
+    <!-- notes-->
+
+    <main id="notes">
+        <div class="loading-state">
+            Loading notes...
+        </div>
+    </main>
+    <!-- undo toast-->
+    <div id="copy-toast" class="copy-toast" aria-hidden="true">
+        ✓ Copied to clipboard
+    </div>
+    <div id="undo-toast" class="undo-toast" aria-hidden="true">
+        <span id="undo-message">
+            Note deleted
+        </span>
+        <button id="undo-button" type="button">
+            Undo
+        </button>
+    </div>
+    <!-- delete modal -->
+    <div id="delete-modal" class="modal-backdrop" aria-hidden="true">
+        <div class="delete-modal">
+            <h2>Delete note?</h2>
+            <p>
+                This note will be permanently deleted.
+            </p>
+            <div class="modal-actions">
+                <button id="cancel-delete" class="modal-button cancel" type="button">
+                    Cancel
+                </button>
+                <button id="confirm-delete" class="modal-button delete" type="button">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

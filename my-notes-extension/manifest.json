@@ -1,0 +1,33 @@
+{
+    "manifest_version": 3,
+    "name": "My Notes",
+    "version": "1.0.0",
+    "description": "Save selected text to My Notes.",
+    "permissions": [
+        "activeTab",
+        "storage",
+        "identity",
+        "contextMenus"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>",
+                "https://spgyrwiexbpsuzxovjex.supabase.co/*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
+    "action": {
+        "default_title": "Save to My Notes"
+    }
+}
