@@ -101,7 +101,7 @@ googleLoginButton.addEventListener(
         } = await supabaseClient.auth.signInWithOAuth({
             provider: "google",
             options: {
-                redirectTo: window.location.origin + "/my_notes/index.html"
+                redirectTo: window.location.origin + "/index.html"
             }
         });
         if (error) {
