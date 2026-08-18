@@ -1438,7 +1438,81 @@ supabaseClient.auth.onAuthStateChange(
     }
 );
 
-
+/* ========================================
+   SAVE TEXT FROM SHORTCUT
+   ======================================== */
+async function saveSharedText() {
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+    const sharedText =
+        params.get("text");
+    if (!sharedText) {
+        return;
+    }
+    console.log(
+        "Text received from Shortcut:",
+        sharedText
+    );
+    /*
+       Get logged-in user.
+    */
+    const {
+        data: {
+            user
+        },
+        error: userError
+    } = await supabaseClient.auth.getUser();
+    if (
+        userError ||
+        !user
+    ) {
+        console.log(
+            "User is not logged in."
+        );
+        return;
+    }
+    /*
+       Save note to Supabase.
+    */
+    const {
+        error
+    } = await supabaseClient
+        .from("notes")
+        .insert({
+            user_id:
+                user.id,
+            text:
+                sharedText,
+            url:
+                null,
+            page_title:
+                "Saved from Safari"
+        });
+    if (error) {
+        console.error(
+            "Could not save shared text:",
+            error
+        );
+        return;
+    }
+    console.log(
+        "Shared text saved successfully!"
+    );
+    /*
+       Remove ?text=... from the URL.
+    */
+    window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+    );
+    /*
+       Refresh notes.
+    */
+    await loadNotes();
+}
 /* ========================================
    INITIALIZATION
    ======================================== */
@@ -1448,6 +1522,7 @@ async function initializeApp() {
         await checkAuth();
     if (user) {
         await loadNotes();
+        await saveSharedText();
     }
 }
 initializeApp();
