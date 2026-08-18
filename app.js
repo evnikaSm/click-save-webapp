@@ -1437,92 +1437,80 @@ supabaseClient.auth.onAuthStateChange(
         }
     }
 );
-
 /* ========================================
-   SAVE TEXT FROM SHORTCUT
+   SAVE NOTE FROM SAFARI SHORTCUT
    ======================================== */
-async function saveSharedText() {
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-    const sharedText =
-        params.get("text");
-    if (!sharedText) {
+async function saveSharedNote() {
+    const hash = window.location.hash;
+    if (!hash.startsWith("#save=")) {
+        return;
+    }
+    const text = decodeURIComponent(
+        hash.substring("#save=".length)
+    ).trim();
+    if (!text) {
         return;
     }
     console.log(
         "Text received from Shortcut:",
-        sharedText
+        text
     );
-    /*
-       Get logged-in user.
-    */
     const {
         data: {
             user
         },
         error: userError
     } = await supabaseClient.auth.getUser();
-    if (
-        userError ||
-        !user
-    ) {
-        console.log(
-            "User is not logged in."
+    if (userError || !user) {
+        console.error(
+            "No logged-in user.",
+            userError
+        );
+        alert(
+            "Please sign in to Click & Save first."
         );
         return;
     }
-    /*
-       Save note to Supabase.
-    */
     const {
         error
     } = await supabaseClient
         .from("notes")
         .insert({
-            user_id:
-                user.id,
-            text:
-                sharedText,
-            url:
-                null,
-            page_title:
-                "Saved from Safari"
+            user_id: user.id,
+            text: text,
+            url: null,
+            page_title: "Saved from Safari"
         });
     if (error) {
         console.error(
-            "Could not save shared text:",
+            "Could not save shared note:",
             error
+        );
+        alert(
+            "Could not save the note."
         );
         return;
     }
     console.log(
-        "Shared text saved successfully!"
+        "Safari note saved successfully!"
     );
-    /*
-       Remove ?text=... from the URL.
-    */
     window.history.replaceState(
         {},
         document.title,
-        window.location.pathname
+        window.location.pathname +
+        window.location.search
     );
-    /*
-       Refresh notes.
-    */
     await loadNotes();
 }
 /* ========================================
    INITIALIZATION
    ======================================== */
-
 async function initializeApp() {
     const user =
         await checkAuth();
     if (user) {
         await loadNotes();
-        await saveSharedText();
+        await saveSharedNote();
     }
 }
 initializeApp();
