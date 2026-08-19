@@ -462,51 +462,19 @@ function initializeSwipeGestures() {
                 wrapper.querySelector(
                     '[data-action="copy"]'
                 );
-
-            note.addEventListener(
-                "click",
-                event => {
-                    // Не открываем редактор при клике по ссылке
-                    if (
-                        event.target.closest("a")
-                    ) {
-                        return;
-                    }
-
-                    // Если пользователь только что свайпал —
-                    // тоже не открываем редактор
-                    if (isHorizontalSwipe) {
-                        return;
-                    }
-
-                    openNoteEditor(wrapper);
-                }
-            );
-
             let startX =
                 0;
-
-
             let startY =
                 0;
-
-
             let currentX =
                 0;
-
-
             let isDragging =
                 false;
-
-
             let isHorizontalSwipe =
                 false;
-
-
             /*
                TOUCH START
             */
-
             note.addEventListener(
                 "touchstart",
                 event => {
@@ -632,50 +600,60 @@ function initializeSwipeGestures() {
             /*
                TOUCH END
             */
-
             note.addEventListener(
                 "touchend",
-                () => {
+                event => {
 
-                    if (
-                        !isDragging
-                    ) {
-
+                    if (!isDragging) {
                         return;
-
                     }
 
+                    isDragging = false;
 
-                    isDragging =
-                        false;
-
+                    const diff =
+                        currentX - startX;
 
                     note.style.transition =
                         "transform 0.25s ease";
 
 
-                    const diff =
-                        currentX -
-                        startX;
-
-
+                    // Был свайп
                     if (
-                        diff < -70
+                        isHorizontalSwipe ||
+                        Math.abs(diff) > 10
                     ) {
 
-                        note.style.transform =
-                            "translateX(-164px)";
+                        if (diff < -70) {
 
-                    } else {
+                            note.style.transform =
+                                "translateX(-164px)";
 
-                        note.style.transform =
-                            "translateX(0)";
+                        } else {
 
+                            note.style.transform =
+                                "translateX(0)";
+                        }
+
+                        return;
                     }
 
-                }
-            );
 
+                    // Обычный тап по ссылке —
+                    // редактор не открываем
+                    if (
+                        event.target.closest("a")
+                    ) {
+                        return;
+                    }
+
+
+                    // Это обычный тап по заметке.
+                    // Открываем editor прямо внутри touchend.
+                    event.preventDefault();
+
+                    openNoteEditor(wrapper);
+                }, { passive: false }
+            );
 
             /*
                COPY
