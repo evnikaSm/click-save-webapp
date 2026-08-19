@@ -722,82 +722,46 @@ function openNoteEditor(wrapper) {
     const textElement =
         note.querySelector(".note-text");
 
-    const currentTitle =
-        titleElement
-            ? titleElement.textContent
-            : "";
-
-    const currentText =
-        textElement
-            ? textElement.textContent
-            : "";
-
     const noteId =
         wrapper.dataset.noteId;
 
     wrapper.classList.add("editing");
 
-    note.style.transform = "translateX(0)";
-
-    note.innerHTML = `
-        <div class="note-editor">
-
-            <input
-                class="note-edit-title"
-                type="text"
-                value="${escapeHtml(currentTitle)}"
-                placeholder="Title"
-            >
-
-            <textarea
-                class="note-edit-text"
-                placeholder="Note"
-            >${escapeHtml(currentText)}</textarea>
-
-        </div>
-    `;
-
-    const titleInput =
-        note.querySelector(".note-edit-title");
-
-    const textInput =
-        note.querySelector(".note-edit-text");
+    note.style.transform =
+        "translateX(0)";
 
 
-    function resizeTextarea() {
+    // Existing elements become editable.
+    // We do NOT replace the HTML.
+    titleElement.contentEditable =
+        "true";
 
-        textInput.style.height = "auto";
+    textElement.contentEditable =
+        "true";
 
-        textInput.style.height =
-            textInput.scrollHeight + "px";
-    }
+    titleElement.spellcheck =
+        true;
 
-    resizeTextarea();
-
-    textInput.addEventListener(
-        "input",
-        resizeTextarea
-    );
-
-
-    /*
-       IMPORTANT:
-       Focus immediately while we're still
-       inside the original user tap.
-    */
-
-    textInput.focus();
-
-    const length =
-        textInput.value.length;
-
-    textInput.setSelectionRange(
-        length,
-        length
-    );
+    textElement.spellcheck =
+        true;
 
 
-    let saving = false;
+    // Prevent iPhone selecting the whole card.
+    titleElement.style.userSelect =
+        "text";
+
+    titleElement.style.webkitUserSelect =
+        "text";
+
+    textElement.style.userSelect =
+        "text";
+
+    textElement.style.webkitUserSelect =
+        "text";
+
+
+    let saving =
+        false;
 
 
     async function saveChanges() {
@@ -806,13 +770,15 @@ function openNoteEditor(wrapper) {
             return;
         }
 
-        saving = true;
+        saving =
+            true;
+
 
         const newTitle =
-            titleInput.value.trim();
+            titleElement.textContent.trim();
 
         const newText =
-            textInput.value.trim();
+            textElement.innerText.trim();
 
 
         const {
@@ -820,17 +786,22 @@ function openNoteEditor(wrapper) {
                 user
             },
             error: userError
-        } = await supabaseClient.auth.getUser();
+        } =
+            await supabaseClient.auth.getUser();
 
 
-        if (userError || !user) {
+        if (
+            userError ||
+            !user
+        ) {
 
             console.error(
                 "Could not get user:",
                 userError
             );
 
-            saving = false;
+            saving =
+                false;
 
             return;
         }
@@ -838,24 +809,27 @@ function openNoteEditor(wrapper) {
 
         const {
             error: updateError
-        } = await supabaseClient
-            .from("notes")
-            .update({
-                page_title:
-                    newTitle ||
-                    "Untitled note",
+        } =
+            await supabaseClient
+                .from("notes")
+                .update({
 
-                text:
-                    newText
-            })
-            .eq(
-                "id",
-                noteId
-            )
-            .eq(
-                "user_id",
-                user.id
-            );
+                    page_title:
+                        newTitle ||
+                        "Untitled note",
+
+                    text:
+                        newText
+
+                })
+                .eq(
+                    "id",
+                    noteId
+                )
+                .eq(
+                    "user_id",
+                    user.id
+                );
 
 
         if (updateError) {
@@ -865,32 +839,41 @@ function openNoteEditor(wrapper) {
                 updateError
             );
 
-            saving = false;
+            saving =
+                false;
 
             return;
         }
+
+
+        titleElement.contentEditable =
+            "false";
+
+        textElement.contentEditable =
+            "false";
 
 
         wrapper.classList.remove(
             "editing"
         );
 
-        await loadNotes();
+
+        document.removeEventListener(
+            "pointerdown",
+            handleOutsideClick
+        );
     }
 
 
     function handleOutsideClick(event) {
 
         if (
-            wrapper.contains(event.target)
+            wrapper.contains(
+                event.target
+            )
         ) {
             return;
         }
-
-        document.removeEventListener(
-            "pointerdown",
-            handleOutsideClick
-        );
 
         saveChanges();
     }
@@ -906,6 +889,31 @@ function openNoteEditor(wrapper) {
 
         },
         0
+    );
+
+
+    // Put cursor in the text immediately.
+    textElement.focus();
+
+
+    const selection =
+        window.getSelection();
+
+    const range =
+        document.createRange();
+
+    range.selectNodeContents(
+        textElement
+    );
+
+    range.collapse(
+        false
+    );
+
+    selection.removeAllRanges();
+
+    selection.addRange(
+        range
     );
 }
 /* ========================================
