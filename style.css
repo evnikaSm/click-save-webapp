@@ -1080,41 +1080,23 @@ h1 {
    ======================================== */
 
 @media (max-width: 375px) {
-
     body {
-
         padding-left:
             12px;
-
         padding-right:
             12px;
-
     }
-
 
     h1 {
-
         font-size:
             26px;
-
     }
-
 
     .note {
 
         padding:
             17px;
-
     }
-
-
-    .note-text {
-
-        font-size:
-            13px;
-
-    }
-
 }
 
 
@@ -1143,4 +1125,39 @@ h1 {
     outline: none;
     user-select: text;
     -webkit-user-select: text;
+}
+
+@media (max-width: 600px) {
+
+    body {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .app-header {
+        padding-top: 29px;
+        padding-bottom: 23px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .note {
+        padding: 19px;
+        border-radius: 19px;
+    }
+
+    .note-title {
+        font-size: 16px;
+    }
+
+    .note-text {
+        font-size: 16px;
+        line-height: 1.75;
+    }
+
+    .note-url {
+        font-size: 11px;
+    }
 }
