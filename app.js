@@ -729,47 +729,35 @@ function initializeSwipeGestures() {
     );
 
 }
-async function openNoteEditor(wrapper) {
+function openNoteEditor(wrapper) {
 
     if (wrapper.classList.contains("editing")) {
         return;
     }
 
-    wrapper.classList.add("editing");
-
-    const noteId = wrapper.dataset.noteId;
-
-    const {
-        data: { user }
-    } = await supabaseClient.auth.getUser();
-
-    if (!user) {
-        wrapper.classList.remove("editing");
-        return;
-    }
-
-    const {
-        data: noteData,
-        error
-    } = await supabaseClient
-        .from("notes")
-        .select("page_title, text")
-        .eq("id", noteId)
-        .eq("user_id", user.id)
-        .single();
-
-    if (error || !noteData) {
-        console.error(
-            "Could not load note for editing:",
-            error
-        );
-
-        wrapper.classList.remove("editing");
-        return;
-    }
-
     const note =
         wrapper.querySelector(".note");
+
+    const titleElement =
+        note.querySelector(".note-title");
+
+    const textElement =
+        note.querySelector(".note-text");
+
+    const currentTitle =
+        titleElement
+            ? titleElement.textContent
+            : "";
+
+    const currentText =
+        textElement
+            ? textElement.textContent
+            : "";
+
+    const noteId =
+        wrapper.dataset.noteId;
+
+    wrapper.classList.add("editing");
 
     note.style.transform = "translateX(0)";
 
@@ -779,18 +767,14 @@ async function openNoteEditor(wrapper) {
             <input
                 class="note-edit-title"
                 type="text"
-                value="${escapeHtml(
-        noteData.page_title || ""
-    )}"
+                value="${escapeHtml(currentTitle)}"
                 placeholder="Title"
             >
 
             <textarea
                 class="note-edit-text"
                 placeholder="Note"
-            >${escapeHtml(
-        noteData.text || ""
-    )}</textarea>
+            >${escapeHtml(currentText)}</textarea>
 
         </div>
     `;
@@ -802,7 +786,6 @@ async function openNoteEditor(wrapper) {
         note.querySelector(".note-edit-text");
 
 
-    // Automatically adjust textarea height
     function resizeTextarea() {
 
         textInput.style.height = "auto";
@@ -816,6 +799,23 @@ async function openNoteEditor(wrapper) {
     textInput.addEventListener(
         "input",
         resizeTextarea
+    );
+
+
+    /*
+       IMPORTANT:
+       Focus immediately while we're still
+       inside the original user tap.
+    */
+
+    textInput.focus();
+
+    const length =
+        textInput.value.length;
+
+    textInput.setSelectionRange(
+        length,
+        length
     );
 
 
@@ -836,6 +836,28 @@ async function openNoteEditor(wrapper) {
         const newText =
             textInput.value.trim();
 
+
+        const {
+            data: {
+                user
+            },
+            error: userError
+        } = await supabaseClient.auth.getUser();
+
+
+        if (userError || !user) {
+
+            console.error(
+                "Could not get user:",
+                userError
+            );
+
+            saving = false;
+
+            return;
+        }
+
+
         const {
             error: updateError
         } = await supabaseClient
@@ -848,8 +870,15 @@ async function openNoteEditor(wrapper) {
                 text:
                     newText
             })
-            .eq("id", noteId)
-            .eq("user_id", user.id);
+            .eq(
+                "id",
+                noteId
+            )
+            .eq(
+                "user_id",
+                user.id
+            );
+
 
         if (updateError) {
 
@@ -863,6 +892,7 @@ async function openNoteEditor(wrapper) {
             return;
         }
 
+
         wrapper.classList.remove(
             "editing"
         );
@@ -871,8 +901,6 @@ async function openNoteEditor(wrapper) {
     }
 
 
-    // Save when user taps somewhere
-    // outside the note
     function handleOutsideClick(event) {
 
         if (
@@ -890,30 +918,17 @@ async function openNoteEditor(wrapper) {
     }
 
 
-    // Wait so the tap that opened the editor
-    // doesn't immediately close it
     setTimeout(
         () => {
+
             document.addEventListener(
                 "pointerdown",
                 handleOutsideClick
             );
+
         },
         0
     );
-
-
-    requestAnimationFrame(() => {
-        textInput.focus();
-
-        const length =
-            textInput.value.length;
-
-        textInput.setSelectionRange(
-            length,
-            length
-        );
-    });
 }
 /* ========================================
    OPEN DELETE MODAL
