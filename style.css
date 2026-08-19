@@ -1152,7 +1152,18 @@ h1 {
 .note-edit-text {
     width: 100%;
     box-sizing: border-box;
+
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+
     font: inherit;
+    color: inherit;
+
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 .note-edit-title {
@@ -1160,16 +1171,20 @@ h1 {
 }
 
 .note-edit-text {
-    min-height: 120px;
-    resize: vertical;
-}
-
-.note-edit-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
+    min-height: 0;
+    height: auto;
+    resize: none;
+    overflow: hidden;
 }
 
 .note-wrapper.editing .swipe-actions {
     display: none;
+}
+
+.note-edit-title:focus,
+.note-edit-text:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    background: transparent;
 }

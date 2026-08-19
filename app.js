@@ -729,24 +729,18 @@ function initializeSwipeGestures() {
     );
 
 }
-
 async function openNoteEditor(wrapper) {
 
-    if (
-        wrapper.classList.contains("editing")
-    ) {
+    if (wrapper.classList.contains("editing")) {
         return;
     }
 
     wrapper.classList.add("editing");
 
-    const noteId =
-        wrapper.dataset.noteId;
+    const noteId = wrapper.dataset.noteId;
 
     const {
-        data: {
-            user
-        }
+        data: { user }
     } = await supabaseClient.auth.getUser();
 
     if (!user) {
@@ -777,11 +771,7 @@ async function openNoteEditor(wrapper) {
     const note =
         wrapper.querySelector(".note");
 
-    const originalHTML =
-        note.innerHTML;
-
-    note.style.transform =
-        "translateX(0)";
+    note.style.transform = "translateX(0)";
 
     note.innerHTML = `
         <div class="note-editor">
@@ -802,134 +792,120 @@ async function openNoteEditor(wrapper) {
         noteData.text || ""
     )}</textarea>
 
-            <div class="note-edit-actions">
-
-                <button
-                    type="button"
-                    class="note-edit-cancel"
-                >
-                    Cancel
-                </button>
-
-                <button
-                    type="button"
-                    class="note-edit-save"
-                >
-                    Save
-                </button>
-
-            </div>
-
         </div>
     `;
 
     const titleInput =
-        note.querySelector(
-            ".note-edit-title"
-        );
+        note.querySelector(".note-edit-title");
 
     const textInput =
-        note.querySelector(
-            ".note-edit-text"
+        note.querySelector(".note-edit-text");
+
+
+    // Automatically adjust textarea height
+    function resizeTextarea() {
+
+        textInput.style.height = "auto";
+
+        textInput.style.height =
+            textInput.scrollHeight + "px";
+    }
+
+    resizeTextarea();
+
+    textInput.addEventListener(
+        "input",
+        resizeTextarea
+    );
+
+
+    let saving = false;
+
+
+    async function saveChanges() {
+
+        if (saving) {
+            return;
+        }
+
+        saving = true;
+
+        const newTitle =
+            titleInput.value.trim();
+
+        const newText =
+            textInput.value.trim();
+
+        const {
+            error: updateError
+        } = await supabaseClient
+            .from("notes")
+            .update({
+                page_title:
+                    newTitle ||
+                    "Untitled note",
+
+                text:
+                    newText
+            })
+            .eq("id", noteId)
+            .eq("user_id", user.id);
+
+        if (updateError) {
+
+            console.error(
+                "Update note error:",
+                updateError
+            );
+
+            saving = false;
+
+            return;
+        }
+
+        wrapper.classList.remove(
+            "editing"
         );
 
-    const saveButton =
-        note.querySelector(
-            ".note-edit-save"
+        await loadNotes();
+    }
+
+
+    // Save when user taps somewhere
+    // outside the note
+    function handleOutsideClick(event) {
+
+        if (
+            wrapper.contains(event.target)
+        ) {
+            return;
+        }
+
+        document.removeEventListener(
+            "pointerdown",
+            handleOutsideClick
         );
 
-    const cancelButton =
-        note.querySelector(
-            ".note-edit-cancel"
-        );
+        saveChanges();
+    }
 
-    // На iPhone сразу ставим курсор в текст
+
+    // Wait so the tap that opened the editor
+    // doesn't immediately close it
+    setTimeout(
+        () => {
+            document.addEventListener(
+                "pointerdown",
+                handleOutsideClick
+            );
+        },
+        0
+    );
+
+
+    // Put cursor into text
     textInput.focus();
-
-    cancelButton.addEventListener(
-        "click",
-        event => {
-            event.stopPropagation();
-
-            note.innerHTML =
-                originalHTML;
-
-            wrapper.classList.remove(
-                "editing"
-            );
-
-            loadNotes();
-        }
-    );
-
-    saveButton.addEventListener(
-        "click",
-        async event => {
-
-            event.stopPropagation();
-
-            const newTitle =
-                titleInput.value.trim();
-
-            const newText =
-                textInput.value.trim();
-
-            saveButton.disabled =
-                true;
-
-            saveButton.textContent =
-                "Saving...";
-
-            const {
-                error: updateError
-            } = await supabaseClient
-                .from("notes")
-                .update({
-                    page_title:
-                        newTitle ||
-                        "Untitled note",
-
-                    text:
-                        newText
-                })
-                .eq(
-                    "id",
-                    noteId
-                )
-                .eq(
-                    "user_id",
-                    user.id
-                );
-
-            if (updateError) {
-
-                console.error(
-                    "Update note error:",
-                    updateError
-                );
-
-                alert(
-                    "Could not save changes."
-                );
-
-                saveButton.disabled =
-                    false;
-
-                saveButton.textContent =
-                    "Save";
-
-                return;
-            }
-
-            wrapper.classList.remove(
-                "editing"
-            );
-
-            await loadNotes();
-        }
-    );
 }
-
 /* ========================================
    OPEN DELETE MODAL
    ======================================== */
