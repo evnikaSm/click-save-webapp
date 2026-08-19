@@ -134,7 +134,7 @@ export default async (req) => {
                 page_title:
                     typeof body.page_title === "string"
                         ? body.page_title
-                        : "Saved from Safari"
+                        : null
             })
         }
     );

@@ -334,7 +334,7 @@ function createNoteHTML(note) {
 
     const title =
         note.page_title ||
-        "Untitled note";
+        "📌";
 
 
     const text =
