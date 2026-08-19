@@ -105,6 +105,14 @@ You can then use the extension to interact with the Click & Save application dir
 
 ---
 
+## 🍎 Safari Integration
+
+Adapted for iOS Safari using Apple Shortcuts. Selected text is shared through the iOS Share Sheet, passed to the app via a URL, and processed by JavaScript before being saved to Supabase. This allows saving notes from Safari without building a separate Safari extension.
+
+Safari → Share Sheet → Apple Shortcut → JavaScript → Supabase
+
+---
+
 ## 📚 What I Practiced
 
 This project was built to gain practical experience with:
