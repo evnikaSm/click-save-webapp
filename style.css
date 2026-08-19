@@ -1141,11 +1141,8 @@ h1 {
 
 }
 
-
 .note-editor {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: block;
 }
 
 .note-edit-title,
@@ -1157,29 +1154,79 @@ h1 {
     outline: none;
     background: transparent;
     padding: 0;
-    margin: 0;
-
-    font: inherit;
-    color: inherit;
 
     -webkit-appearance: none;
     appearance: none;
+
+    font-family:
+        "Roboto Mono",
+        monospace;
+
+    letter-spacing: -0.3px;
 }
 
+
+/* Same appearance as .note-title */
 .note-edit-title {
-    font-weight: 600;
+    display: block;
+
+    margin:
+        0 0 10px;
+
+    color:
+        var(--primary);
+
+    font-size:
+        15px;
+
+    font-weight:
+        700;
+
+    line-height:
+        1.5;
 }
 
+
+/* Same appearance as .note-text */
 .note-edit-text {
-    min-height: 0;
-    height: auto;
-    resize: none;
-    overflow: hidden;
+    display: block;
+
+    margin:
+        0 0 17px;
+
+    color:
+        var(--text);
+
+    font-size:
+        15px;
+
+    font-weight:
+        400;
+
+    line-height:
+        1.75;
+
+    min-height:
+        0;
+
+    height:
+        auto;
+
+    resize:
+        none;
+
+    overflow:
+        hidden;
+
+    overflow-wrap:
+        anywhere;
 }
+
 
 .note-wrapper.editing .swipe-actions {
     display: none;
 }
+
 
 .note-edit-title:focus,
 .note-edit-text:focus {
@@ -1187,4 +1234,34 @@ h1 {
     outline: none;
     box-shadow: none;
     background: transparent;
+}
+
+
+/* iPhone */
+@media (max-width: 600px) {
+
+    .note-edit-title {
+        font-size:
+            14px;
+    }
+
+    .note-edit-text {
+        font-size:
+            14px;
+
+        line-height:
+            1.75;
+    }
+
+}
+
+
+/* Small iPhones */
+@media (max-width: 375px) {
+
+    .note-edit-text {
+        font-size:
+            13px;
+    }
+
 }
