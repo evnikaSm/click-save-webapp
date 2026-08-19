@@ -162,7 +162,7 @@ This project was built to gain practical experience with:
 Some features that could be added in the future:
 
 * 🔎 Search and filter notes
-* 🔮 edit notes
+* 🔮 edit titles of notes
 * 🏷️ Tags and categories
 * 📌 Pin important notes
 * 🌙 Dark mode
