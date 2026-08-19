@@ -903,8 +903,17 @@ async function openNoteEditor(wrapper) {
     );
 
 
-    // Put cursor into text
-    textInput.focus();
+    requestAnimationFrame(() => {
+        textInput.focus();
+
+        const length =
+            textInput.value.length;
+
+        textInput.setSelectionRange(
+            length,
+            length
+        );
+    });
 }
 /* ========================================
    OPEN DELETE MODAL
