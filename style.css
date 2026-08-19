@@ -1140,3 +1140,36 @@ h1 {
     }
 
 }
+
+
+.note-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.note-edit-title,
+.note-edit-text {
+    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
+}
+
+.note-edit-title {
+    font-weight: 600;
+}
+
+.note-edit-text {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.note-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.note-wrapper.editing .swipe-actions {
+    display: none;
+}
